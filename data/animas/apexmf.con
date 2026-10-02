@@ -1,0 +1,21 @@
+# apexmf.con created by apexmf
+wd	C:/Users/Lizmot34/Desktop/PointLoads
+mfwd	C:/Users/Lizmot34/Desktop/PointLoads/MODFLOW
+sim_start	1/1/1987
+cal_start	1/1/1992
+cal_end	12/31/2011
+cha_file	n
+subs	n
+gw_level	n
+grids	n
+lai_file	n
+lai_subs	n
+salt_subs	[9, 12, 75]
+riv_parm	n
+baseflow	n
+fdc	n
+min_fdc	10
+max_fdc	90
+interval_num	20
+time_step	month
+pp_included	n

@@ -1,0 +1,18 @@
+# Reference run (Windows / Intel ifort, 3 years 1987-1989): inputs + the outputs that
+# scripts/regress.py compares (SITE75.DWS .MWS .RCH .SWT .WSS and MODFLOW/amf_*.out).
+# Not tracked: outputs the regression does not compare, copies, and tool leftovers.
+SITE75.OUT
+SITE75.SUS
+SITE75.*.TXT
+SITE75.*.apexmf
+fort.*
+*.exe
+MODFLOW/mf_1000.fhd
+MODFLOW/mf_1000.fdn
+MODFLOW/amf_RT3D_out
+SALINITY/salt.output.*
+*.bak
+*.rec
+*.jac
+*.jco
+*.pst
