@@ -40,10 +40,15 @@
      
       ! Version description
       ! STR='APEX1501-MODFLOW for the White River Watershed. rev.05112020 '
-      WRITE(*,*) ''
-      STR='  APEX-MODFLOW-RT3D-Salt (AMRS) rev.24-003  '
-      WRITE(*,*) STR
-      WRITE(*,*) ''
+      ! --version / -v: print version information and stop before any file is read
+      IF(COMMAND_ARGUMENT_COUNT()>=1)THEN
+          CALL GET_COMMAND_ARGUMENT(1,TMPSTR)
+          IF(TRIM(TMPSTR)=='--version'.OR.TRIM(TMPSTR)=='-v')THEN
+              CALL AMRS_VERSION
+              STOP
+          END IF
+      END IF
+      CALL AMRS_BANNER
      
       CALL AHEAD
       ADUM='APEXRUN.DAT'
@@ -961,7 +966,7 @@
           IF(KFL(1)>0)THEN
               CALL APAGE(0)
               WRITE(KW(1),'(//1X,A/)')'____________________WEATHER DATA_________&
-              ______________'
+              &______________'
               WRITE(KW(1),3750)CO2
               SELECT CASE(ICO2)
 	              CASE(1)
@@ -2705,7 +2710,7 @@
                   WRITE(KW(1),'(/T10,A,F8.0,A)')'ANNUAL HEAT UNITS = ',AHSM,' C'                                          
                   CALL APAGE(1)                                                                                           
                   WRITE(KW(1),'(//1X,A/)')'____________________SOIL DATA____________&                                     
-                  ________'                                                                                               
+                  &________'                                                                                               
                   WRITE(KW(1),3000)SALB(ISA),MXLA,ZQT,ZF,ZTK,FBM(ISA),FHP(ISA),XIDS&                                      
                   (ISA),OCPD(ISA),RTN1                                                                                    
                   WRITE(KW(1),3001)IWTB,WTMN(ISA),WTMX(ISA),WTBL(ISA)                                                     
@@ -2878,11 +2883,11 @@
               IF(KFL(1)>0)THEN                                                                                            
                   CALL APAGE(1)                                                                                           
                   WRITE(KW(1),'(//1X,A/)')'____________________SOIL PHYSICAL DATA___&                                     
-                  _________________'                                                                                      
+                  &_________________'                                                                                      
                   CALL SOLIOP                                                                                             
                   CALL APAGE(1)                                                                                           
                   WRITE(KW(1),'(//1X,A/)')'____________________SOIL CHEMICAL DATA___&                                     
-                  _________________'                                                                                      
+                  &_________________'                                                                                      
                   CALL SOLIOC                                                                                             
               END IF                                                                                                      
               !  1  BIR  = IRRIGATION TRIGGER--3 OPTIONS                                                                  
@@ -3619,7 +3624,7 @@
               WRITE(KW(1),2123)'PHU',(PHUX(J),J=1,LC)
               CALL APAGE(0)
               WRITE(KW(1),'(//1X,A/)')'________________SUBAREA HYDROLOGIC DATA__&
-              _______________________'
+              &_______________________'
               WRITE(KW(1),2111)
               SMWD=0.
               DO ISA=1,MSA
@@ -3648,7 +3653,7 @@
               END IF
               CALL APAGE(0)
               WRITE(KW(1),'(//1X,A/)')'___________________ROUTING REACH DATA____&
-              _______________________'
+              &_______________________'
               WRITE(KW(1),2126)
               DO ISA=1,MSA
                   ! PRINTOUT REACH DATA
@@ -3660,7 +3665,7 @@
               END DO
               CALL APAGE(0)
               WRITE(KW(1),'(//1X,A/)')'___________________RESERVOIR DATA________&
-              ___________________'
+              &___________________'
               WRITE(KW(1),2128)
           END IF    
 	      SRYB=0.
@@ -3797,22 +3802,22 @@
               IF(KFL(9)>0)WRITE(KW(9),2112)
               IF(KFL(43)>0)THEN
                   WRITE(KW(43),'(//1X,A/)')'____________________SOIL DATA___&
-                  _________________'
+                  &_________________'
                   WRITE(KW(43),900)
               END IF 
               IF(KFL(46)>0)THEN
                   WRITE(KW(46),'(//1X,A/)')'____________________SOIL DATA___&
-                  _________________'
+                  &_________________'
                   WRITE(KW(46),900)
               END IF    
               IF(KFL(47)>0)THEN
                   WRITE(KW(47),'(//1X,A/)')'____________________SOIL DATA___&
-                  _________________'
+                  &_________________'
                   WRITE(KW(47),900)
               END IF    
               IF(KFL(48)>0)THEN
                   WRITE(KW(48),'(//1X,A/)')'____________________SOIL DATA___&
-                  _________________'
+                  &_________________'
                   WRITE(KW(48),900)
               END IF    
               IF(KFL(11)>0)WRITE(KW(11),4082)HEDC,(HED(KD(J1)),J1=1,NKD),&
@@ -5200,10 +5205,10 @@
               IPD=NX(3)
               NGN=NX(4)
 	          KFL(34)=NX(5)
-	          IF(KFL(34)>0)OPEN(KW(34),FILE=ASTN//".SAO")
+	          IF(KFL(34)>0)OPEN(KW(34),FILE=TRIM(ADJUSTL(ASTN))//".SAO")
 	          KFL(35)=NX(6)
 	          IF(KFL(35)>0)THEN
-                  OPEN(KW(35),FILE=ASTN//".RCH")
+                  OPEN(KW(35),FILE=TRIM(ADJUSTL(ASTN))//".RCH")
 	              SMMH=0.
               END IF
 	          CALL AISPL(IPD,INP)
@@ -5270,7 +5275,7 @@
       5X,'OUT',5X,'IN1',5X,'SA#',5X,'IN2',5X,'SA#')
    17 FORMAT(T10,A8,3I8,8X,2I8)
    18 FORMAT(//1X,'______________WATERSHED SUMMARY TABLE________________&
-      _'/T10,'AVE ANNUAL SUM OF SUBAREA OUTFLOWS/TOTAL WATERSHED OUTFLOW'/)
+      &_'/T10,'AVE ANNUAL SUM OF SUBAREA OUTFLOWS/TOTAL WATERSHED OUTFLOW'/)
    19 FORMAT(11F10.0)   
    24 FORMAT(8X,A2,I8,19X,F12.2,I4,F8.2,F8.3,F8.2,3F8.1)
    33 FORMAT(8X,A2,I8,19X,F12.2,5F8.1,20F8.2)
@@ -5395,7 +5400,7 @@
   713 FORMAT(/1X,'-----LIVESTOCK BUY SELL DATA'/T27,'HERD'/T12,'OWNER',&
       1X,'HERD',5X,'SIZE'/6X,'Y M D',3X,'ID  ID',5X,'(HEAD)')
   714 FORMAT(///1X,'____________________LIVESTOCK MANAGEMENT DATA_______&
-      _____________'//T20,'HERD',13X,'FRACTION',3X,'GRAZE',4X,'MANURE',&
+      &_____________'//T20,'HERD',13X,'FRACTION',3X,'GRAZE',4X,'MANURE',&
       5X,'URINE'/4X,'OWNER',1X,'HERD',5X,'SIZE',5X,'MANURE',3X,'IN FEED'&
       ,4X,'RATE',6X,'PROD',6X,'PROD',/7X,'ID  ID',5X,'(HEAD)',7X,'ID',5X&
       ,'AREA',T46,'(kg/hd/d)',1X,'(kg/hd/d)',1X,'(l/hd/d)')
@@ -5646,7 +5651,7 @@
  3536 FORMAT(T15,'HERD ID=',I3,2X,'NUM=',I15,' HD',2X,'FEED AREA TIME=',&
       F6.2,' H/D',2X,'GRAZE LIMIT=',F5.2,' t/ha')
  3540 FORMAT(//1X,'____________________GENERAL INFORMATION______________&
-      _______'/)
+      &_______'/)
  3620 FORMAT(T15,'MAX ANNUAL VOL APPL TO A CROP = ',F6.0,' mm'/T15,'MIN &
       SINGLE APPL VOL = ',F6.0,' mm'/T15,'MAX SINGLE APPL VOL = ',F6.0,&
       ' mm')

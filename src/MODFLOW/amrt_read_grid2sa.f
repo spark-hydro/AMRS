@@ -11,7 +11,7 @@
       integer i,j,subareaID,num_subarea_cells
 
       !open file
-      open (6004,file="MODFLOW\apexmf_grid2sa.txt") 
+      open (6004,file="MODFLOW/apexmf_grid2sa.txt") 
       print *, 'Reading Grid to Subarea mapping information...'
 
       !read the total number of APEX subareas in the watershed (i.e., how many will be read in)
@@ -39,6 +39,9 @@
         read(6004,*) (g2s_map(i)%cell_perc(j),j=1,num_subarea_cells)
 
         else
+          allocate(g2s_map(i)%cell_row(0))
+          allocate(g2s_map(i)%cell_col(0))
+          allocate(g2s_map(i)%cell_perc(0))
           read(6004,*)
           read(6004,*)
           read(6004,*)

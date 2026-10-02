@@ -12,7 +12,7 @@
       integer i,j,cellID,num_cell_subareas,ncells,dum
       
       !open file
-      open (6002,file="MODFLOW\apexmf_sa2grid.txt")
+      open (6002,file="MODFLOW/apexmf_sa2grid.txt")
       print *, 'Reading Subarea to Grid mapping information...'
       
       !read the total number of MODFLOW grid cells
@@ -37,6 +37,10 @@
          read(6002,*) (s2g_map(i)%subarea_id(j),j=1,num_cell_subareas)
          read(6002,*) (s2g_map(i)%subarea_area(j),j=1,num_cell_subareas)
 
+        else
+         !empty cell: zero-size arrays, so size() is defined everywhere
+         allocate(s2g_map(i)%subarea_id(0))
+         allocate(s2g_map(i)%subarea_area(0))
         endif
         
       enddo

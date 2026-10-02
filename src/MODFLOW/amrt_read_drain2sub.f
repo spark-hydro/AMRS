@@ -13,7 +13,7 @@
       integer i,drn_row,drn_col,sub_basin     
       
 !     Read in row, column, and associated sub-basin for each DRAIN cell
-      open (6006,file="MODFLOW\apexmf_drain2sa.txt")  !Ali 
+      open (6006,file="MODFLOW/apexmf_drain2sa.txt")  !Ali 
       print *, 'Reading Drain to Subbasin Mapping...'
       print *
       read(6006,*) ndrn_subs ! # of MODLFOW drain cells in the APEX domain

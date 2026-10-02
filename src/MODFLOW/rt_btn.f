@@ -793,7 +793,7 @@ C     each time step, and need to recalculate R).
         ENDDO
       ENDIF           
       
-      open(8844,file='MODFLOW\rt3d_time_steps')
+      open(8844,file='MODFLOW/rt3d_time_steps')
       write(8844,*) time2,DT
       
  9999 RETURN

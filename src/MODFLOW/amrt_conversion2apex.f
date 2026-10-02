@@ -64,7 +64,7 @@
       sub_drn = 0.
       sub_gwno3_exchange = 0
       sub_gwp_exchange = 0.
-      sub_salt_exchange = 0.
+      if(allocated(sub_salt_exchange)) sub_salt_exchange = 0.
       sub_gwno3 = 0.
       sub_gwp = 0.
 
@@ -383,7 +383,7 @@
       !calculate total groundwater volume
       gw_volume = 0.
       sub_gw_volume = 0.
-      if(IUNIT(1)) then
+      if(IUNIT(1) /= 0) then
         num_layer = mf_NTOP
       else
         num_layer = NLAY
@@ -472,7 +472,7 @@
       day_total = day_total + 1
       
       !zero out arrays for next day
-      latsalt = 0. !salt ion mass in lateral return flow
+      if(allocated(latsalt)) latsalt = 0. !salt ion mass in lateral return flow
       
       
  100  format(i6,20e20.10)
