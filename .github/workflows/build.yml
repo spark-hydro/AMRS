@@ -1,0 +1,95 @@
+# AMRS CI, modeled on swat-model/swatplus (.github/workflows/test.yml)
+# Builds, then runs ctest: the --version smoke test, plus the regression on the example model
+# in data/animas (scripts/regress.py) once that folder is committed.
+
+name: Build AMRS
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: ${{ matrix.toolchain.compiler }} ${{ matrix.build_type }} (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest]
+        build_type: [Release, Debug]
+        toolchain:
+          - {compiler: gcc, version: 13}
+          - {compiler: intel, version: '2025.2'}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-tags: true
+          fetch-depth: 0
+
+      - name: Install compiler
+        uses: fortran-lang/setup-fortran@v1
+        id: setup-fortran
+        with:
+          compiler: ${{ matrix.toolchain.compiler }}
+          version: ${{ matrix.toolchain.version }}
+
+      - name: Configure
+        run: |
+          echo "Fortran compiler: ${{ env.FC }}"
+          cmake --version
+          cmake -B build \
+            -D CMAKE_Fortran_COMPILER=${{ env.FC }} \
+            -D CMAKE_BUILD_TYPE=${{ matrix.build_type }}
+
+      - name: Build
+        run: cmake --build build --parallel 4
+
+      - name: Check executable
+        run: |
+          ls -hl build/amrs-*
+          file build/amrs-*
+
+      - name: Regression test
+        run: ctest --test-dir build --output-on-failure --no-tests=error
+
+  docker:
+    name: docker image
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-tags: true
+          fetch-depth: 0
+
+      - name: Build image
+        run: docker build -t amrs:ci --build-arg VERSION="$(git describe --tags --always)" .
+
+      - name: --version (release, and debug with -e DEBUG=1)
+        run: |
+          docker run --rm amrs:ci --version | grep -q "Release"
+          docker run --rm -e DEBUG=1 amrs:ci --version | grep -q "Debug"
+          docker run --rm amrs:ci --version
+
+      - name: Regression test inside the container
+        if: hashFiles('data/animas/APEXRUN.DAT') != ''
+        run: |
+          # regress.py runs this wrapper like the executable, in a temporary copy of the model
+          printf '#!/bin/sh\nexec docker run --rm --user "$(id -u):$(id -g)" -v "$PWD":/model amrs:ci\n' > run_in_docker.sh
+          chmod +x run_in_docker.sh
+          python3 scripts/regress.py ./run_in_docker.sh data/animas
+
+      - name: Regression test inside the container, debug build (-e DEBUG=1)
+        if: hashFiles('data/animas/APEXRUN.DAT') != ''
+        run: |
+          printf '#!/bin/sh\nexec docker run --rm --user "$(id -u):$(id -g)" -e DEBUG=1 -v "$PWD":/model amrs:ci\n' > run_in_docker_debug.sh
+          chmod +x run_in_docker_debug.sh
+          python3 scripts/regress.py ./run_in_docker_debug.sh data/animas
+

@@ -364,3 +364,6 @@ FodyWeavers.xsd
 
 # build folder
 amrs/
+
+# CMake build folders (build/debug, build/release, build/ifx, ...)
+/build/*/
