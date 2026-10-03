@@ -367,3 +367,7 @@ amrs/
 
 # CMake build folders (build/debug, build/release, build/ifx, ...)
 /build/*/
+
+# local comparison outputs and archives (not part of the repository)
+/data/animas_models/
+/data/*.7z
