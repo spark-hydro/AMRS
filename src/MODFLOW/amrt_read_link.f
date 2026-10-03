@@ -177,7 +177,7 @@
       apexmf_out_ctr = 1
 
       !open files for variable average output (rtb avg)
-      if(apexmf_out_avg) then
+      if(apexmf_out_avg /= 0) then
         
         !recharge (to modflow)
         open(30020,file='MODFLOW/amf_MF_recharge_monthly.out')

@@ -41,7 +41,7 @@
       close(6001)  
 
       !read RT3D information if active
-      if(rt_active) call amrt_init_rt3d
+      if(rt_active /= 0) call amrt_init_rt3d
 
 
       end subroutine amrt_init_mf

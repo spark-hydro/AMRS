@@ -1,0 +1,33 @@
+# Reference run (Windows / Intel ifort, amrs_rel24-003, 3 years 1987-1989): the inputs, plus the
+# outputs that scripts/regress.py compares: SITE75.DWS .MWS .RCH .SWT .WSS and MODFLOW/amf_*.out.
+# Everything else a model run writes is ignored, so a run in this folder leaves nothing to commit
+# (copy the folder first: regress.py already does).
+
+# APEX outputs (<site>.<ext>); keep the five that are compared
+SITE75.*
+!SITE75.DWS
+!SITE75.MWS
+!SITE75.RCH
+!SITE75.SWT
+!SITE75.WSS
+
+# MODFLOW / RT3D outputs; keep the compared *.out files
+MODFLOW/amf_*
+!MODFLOW/amf_*.out
+MODFLOW/mf_1000.fhd
+MODFLOW/mf_1000.fdn
+MODFLOW/mf_1000.lst
+MODFLOW/rt3d_time_steps
+
+# salinity outputs, Fortran scratch files, run logs
+SALINITY/salt.output.*
+fort.*
+*.log
+
+# tool leftovers and executables
+*.exe
+*.bak
+*.rec
+*.jac
+*.jco
+*.pst

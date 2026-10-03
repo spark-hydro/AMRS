@@ -14,6 +14,7 @@
       character	(len=16) ::text6,text7,text8,text9,text10
       integer :: i,j,jj,k,m,nly,crop_id,day,num_sub
       integer :: yrc,dayc,year_index,year_days
+      logical :: salt_pt_exist
       real :: salt_conc(8),salt_fraction(5),
      &        sub_area_m2,water_volume,line_vals(1000)
 
@@ -100,9 +101,11 @@
 
 
       !check for salt point loads - if present, read in values for each day of the simulation
-      inquire(file='Salinity/salt_point_loads',exist=salt_point)
-      if(salt_point) then
-        open(2007,file='Salinity/salt_point_loads')
+      inquire(file='SALINITY/salt_point_loads',exist=salt_pt_exist)
+      salt_point = 0
+      if(salt_pt_exist) salt_point = 1
+      if(salt_point /= 0) then
+        open(2007,file='SALINITY/salt_point_loads')
         read(2007,*)
         allocate(salt_ptloads(mion,msa,NBYR,366))
         do i=1,mion !loop through the 8 ions
@@ -372,8 +375,8 @@
      &               (salt_header(jj),jj=1,16)
      
      
-      open(8642,file='Salinity/conc_runoff_water')
-      open(8643,file='Salinity/conc_soil_water')
+      open(8642,file='SALINITY/conc_runoff_water')
+      open(8643,file='SALINITY/conc_soil_water')
      
      
 500   format(100a12)

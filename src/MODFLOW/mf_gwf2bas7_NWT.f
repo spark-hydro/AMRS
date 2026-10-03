@@ -1869,6 +1869,8 @@ C3------DECODE THE FILE TYPE, UNIT NUMBER, AND NAME.
       CALL URWORD(LINE,LLOC,INAM1,INAM2,0,N,R,IOUT,INUNIT)
       IFLEN=INAM2-INAM1+1
       FNAME(1:IFLEN)=LINE(INAM1:INAM2)
+C     Windows-style folder separators in the name file: '/' works on every OS
+      CALL AMRT_FIXSLASH(FNAME)
       INQUIRE(UNIT=IU,OPENED=LOP)
       IF(LOP) THEN
          IF(IOUT.EQ.0) THEN
@@ -1964,22 +1966,6 @@ C13-----WRITE THE FILE NAME AND OPEN IT.
      &  1X,'FILE TYPE:',A,'   UNIT ',I4,3X,'STATUS:',A,/
      &  1X,'FORMAT:',A,3X,'ACCESS:',A)
 
-cDEC$ IF DEFINED (__INTEL_COMPILER)
-cDEC$ ELSE
-      ! When compiled and run using gfortran, the output file cannot be
-      !  opened with form='BINARY' because that's an Intel Visual
-      !  Fortran addition.
-      if (fmtarg(1:6).eq.'BINARY') then !aqd
-        write(*,*) '*******************************************'
-        write(*,*) 'BINARY FILES WRITTEN USING THE GFORTRAN'
-        write(*,*) ' COMPILER ARE NOT FORMATTED AS THOSE FROM'
-        write(*,*) ' INTEL VISUAL FORTRAN, AND ARE THEREFORE'
-        write(*,*) ' WILL BE WRITTEN AS TEXT.'
-        write(*,*) '*******************************************'
-        fmtarg='FORMATTED' !aqd
-        accarg='STREAM' !aqd
-      endif !aqd
-cDEC$ ENDIF
 
       OPEN(UNIT=IU,FILE=FNAME(1:IFLEN),FORM=FMTARG,
      1      ACCESS=ACCARG,STATUS=FILSTAT,ACTION=FILACT,ERR=2000)

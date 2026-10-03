@@ -212,11 +212,11 @@
         allocate(amrt_csolute_avg_mo(ncol,nrow,nlay,10))
         allocate(amrt_csolute_tot_yr(ncol,nrow,nlay,10))
         allocate(amrt_csolute_avg_yr(ncol,nrow,nlay,10))
+        amrt_csolute_tot_mo = 0.
+        amrt_csolute_avg_mo = 0.
+        amrt_csolute_tot_yr = 0.
+        amrt_csolute_avg_yr = 0.
       endif
-      amrt_csolute_tot_mo = 0.
-      amrt_csolute_avg_mo = 0.
-      amrt_csolute_tot_yr = 0.
-      amrt_csolute_avg_yr = 0.
 
       day_total = 1
       

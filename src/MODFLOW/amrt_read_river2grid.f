@@ -12,7 +12,7 @@
       integer i,j,temp,nsub_current      
       
 !     Read in the ID and percent area of each APEX Subarea contributing to each MODFLOW grid cell
-      open (6005,file="MODFLOW\apexmf_river2grid.txt")  !Ali 
+      open (6005,file="MODFLOW/apexmf_river2grid.txt")  !Ali 
       print *, 'Reading Subarea to River Cell mapping...'
       print *
 

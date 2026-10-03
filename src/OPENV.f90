@@ -11,7 +11,7 @@
 	  END IF
 	  FNM=ADJUSTL(FNM)	
 	  INQUIRE(FILE=FNM,EXIST=XMIS)
-	  IF(XMIS==.TRUE.)THEN
+	  IF(XMIS)THEN
 	      OPEN(NUM,FILE=FNM)
 	  ELSE
           WRITE(*,'(/A/)')'File '//TRIM(FNM)//' IS MISSING.'

@@ -1204,7 +1204,7 @@
         SMQS(IDO,m) = surfqsalt(IDO,m) + gwsalt(IDO,m) + latsalt(IDO,m) + surfsalt(IDO,m) + qrfsalt(IDO,m)
         
         !add in point source (kg)
-        if(salt_point) then
+        if(salt_point /= 0) then
           SMQS(IDO,m) = SMQS(IDO,m) + salt_ptloads(m,nbsa(isa),IY,IDA)
           pts_sub(nbsa(isa),m) = salt_ptloads(m,nbsa(isa),IY,IDA)
         endif

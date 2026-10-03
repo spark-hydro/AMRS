@@ -13,21 +13,23 @@
 !  ACCESS specifier --
 !
 !    Standard Fortran -- Use unless there is a reason to do otherwise.
-      DATA ACCESS/'SEQUENTIAL'/
+!      DATA ACCESS/'SEQUENTIAL'/
+!    Stream access: same bytes as Intel FORM='BINARY' (gfortran has no 'BINARY' form).
+      DATA ACCESS/'STREAM'/
 !
 !
 !  FORM specifier --
 !
 !    Standard Fortran, which results in vender dependent (non-portable)
 !    files.  Use unless there is a reason to do otherwise.
-!      DATA FORM/'UNFORMATTED'/
+      DATA FORM/'UNFORMATTED'/
 !
 !    Non-standard Fortran that causes code compiled by Compaq (Digital)
 !    Fortran on personal computers to use unstructured non-formatted
 !    files.  This may make it possible for the non-formatted files used
 !    by MODFLOW to be used with programs that are compiled by other
 !    compilers.
-      DATA FORM/'BINARY'/
+!      DATA FORM/'BINARY'/
 !
 !
 !  OPEN-statement specifiers related to file-sharing.

@@ -23,7 +23,7 @@
       call amrt_conversion2apex
 
       !Print out APEX-MODFLOW variable averages (rtb avg) -----------------------------------------------------------
-      if(apexmf_out_avg) then
+      if(apexmf_out_avg /= 0) then
       if(LPYR.eq.0) then
         days_in_month = month_days
       else
@@ -106,7 +106,7 @@
         amrt_RECH_APEX_tot_mo = 0.
         amrt_GWSW_MF_tot_mo = 0.
         amrt_GWSW_APEX_tot_mo = 0.
-        amrt_csolute_tot_mo = 0.
+        if(allocated(amrt_csolute_tot_mo)) amrt_csolute_tot_mo = 0.
 
         !print out yearly totals if last month of year
         if(amrt_month_counter.eq.12) then
@@ -184,7 +184,7 @@
           amrt_RECH_APEX_tot_yr = 0.
           amrt_GWSW_MF_tot_yr = 0.
           amrt_GWSW_APEX_tot_yr = 0.
-          amrt_csolute_tot_yr = 0.
+          if(allocated(amrt_csolute_tot_yr)) amrt_csolute_tot_yr = 0.
 
           day_count_yr = 0
           amrt_month_counter = 0 !start in January
