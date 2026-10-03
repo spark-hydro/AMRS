@@ -18,8 +18,8 @@ own size, so near-zero values do not blow up the comparison:
 Files are gated on relL2 per group; the RT3D transport files are only reported.
 Why: the reference is one Intel (ifort, Windows) run. The salt/nitrate/phosphorus
 transport results are very sensitive to the compiler and its flags (gfortran Release and
-Debug agree with each other, differ from ifort by relL2 ~0.05-0.08; ifx on Linux differs by
-~1.0), so a numeric gate on them would only measure the compiler. The thresholds are about
+Debug agree with each other, differ from ifort by relL2 ~0.01-0.25; ifx on Linux by
+~0.4-1.2), so a numeric gate on them would only measure the compiler. The thresholds are about
 3x above the worst difference seen on gfortran 16 and ifx 2025.3, to catch real breakage
 (wrong flow, missing output, NaN) and not compiler noise.
 
@@ -48,13 +48,13 @@ BAD = re.compile(r'\b(nan|[-+]?inf(inity)?)\b', re.I)
 PATTERNS = ['*.DWS', '*.MWS', '*.RCH', '*.SWT', '*.WSS',
             'MODFLOW/amf_*.out']
 # First matching rule wins: (regex on the relative path, 'gate' or 'info', max relL2 for 'gate').
-# Observed relL2 (gfortran Release = Debug / ifx, 3-year animas dataset) in the comments.
+# Observed relL2 (gfortran Release = Debug / ifx, 3-year animas dataset, amrs_rel24-003 reference).
 RULES = [
-    # APEX outputs: <= 5.8e-3 (gfortran), <= 6.8e-3 (ifx)
+    # APEX outputs: <= 7.9e-4 (gfortran), <= 4.5e-3 (ifx)
     (r'^(?!MODFLOW/)', 'gate', 2e-2),
-    # RT3D concentrations and solute loads to/from the river: 0.01-0.08 (gfortran), 0.1-1.0 (ifx)
+    # RT3D concentrations and solute loads to/from the river: 0.01-0.25 (gfortran), 0.38-1.2 (ifx)
     (r'^MODFLOW/amf_(RT3D_c|RT_riv|apex_riv)', 'info', None),
-    # MODFLOW flow, recharge, percolation, channel depth: <= 1.2e-2 (gfortran), <= 3.2e-2 (ifx)
+    # MODFLOW flow, recharge, percolation, channel depth: <= 1.4e-2 (gfortran), <= 2.8e-2 (ifx)
     (r'^MODFLOW/', 'gate', 1e-1),
 ]
 # Text the program prints when a run finishes normally; set to None to skip the check.

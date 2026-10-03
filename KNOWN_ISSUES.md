@@ -44,18 +44,27 @@ differ, gfortran Release, 3-year example). With this and the guard in item 1, if
 - Free-form string continuations without a leading `&` (15 places) put the leading blanks inside the
   string on gfortran and are rejected by ifx; they now have `&` (report header text only).
 
-## 5. Compiler dependence of the results (why the regression tolerance is tiered)
+## 5. Reference run and compiler dependence (why the regression tolerance is tiered)
 
-Against the Windows ifort run (`relL2` = whole-file relative error):
+Reference outputs in `data/animas`: 3-year run of `amrs_rel24-003.exe` (Intel ifort, Windows), the
+build of the source in this repository (rev.24-003). Other Windows builds were compared on the same
+inputs: `amrs_rel230127`, `amrs_rel24-002`, `amrs_deb24-002` and `APEX-MODFLOW-Salt-V2` give the old
+`SITE75.MWS` monthly values (38.27 in Jan 1987); only rev.24-003 gives 3.609e+07, as gfortran and
+ifx do. So an older executable is not a valid reference for this source.
 
-| Group | gfortran Release = Debug | ifx Linux (default flags) |
+Whole-file relative error (`relL2`) against the reference, 3-year example:
+
+| Group | gfortran Release (Debug the same) | ifx Linux (default flags) |
 |---|---|---|
-| APEX `SITE75.*` | <= 6e-3 | <= 7e-3 |
-| MODFLOW flow, recharge, percolation | <= 1.2e-2 | <= 3.2e-2 |
-| RT3D nitrate, phosphorus, salt, river loads | 0.01 - 0.08 | 0.1 - 1.0 |
+| `SITE75.MWS` | 1.5e-10 | 2.9e-9 |
+| other APEX `SITE75.*` | <= 7.9e-4 | <= 4.5e-3 |
+| MODFLOW flow, recharge, percolation, channel depth | <= 1.4e-2 | <= 2.8e-2 |
+| RT3D nitrate, phosphorus, salt, river loads | 0.01 - 0.25 | 0.38 - 1.2 |
 
-ifx differs from the Windows ifort run most in the RT3D transport files, whatever the options tried:
-default or `-fp-model=precise`, `-O2` or `-O0` Debug, zero-initialised locals (`-init=zero,arrays`).
-The cause is not found (`-save` does not run on ifx: "allocate error"). The salt chemistry in item 1
-changes only the salt results. `scripts/regress.py` therefore gates APEX and MODFLOW flow files and
-reports the RT3D transport files only.
+Between Windows ifort builds on the same inputs, Release and Debug already differ in the RT3D
+transport files (Debug vs Release 0.01 - 0.13), so a transport difference of that size between
+compilers is not a porting error. ifx differs most; the cause is not found (not the salt NaN path,
+not uninitialised locals `-init=zero,arrays`, not the floating-point model `-fp-model=precise`, not
+the optimisation level; `-save` does not run on ifx: "allocate error"). `scripts/regress.py`
+therefore gates the APEX and MODFLOW flow files (thresholds 2e-2 and 1e-1, 4x or more above the
+worst value seen) and only reports the RT3D transport files.
