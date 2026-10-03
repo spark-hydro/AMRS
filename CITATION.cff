@@ -62,3 +62,21 @@ references:
     volume: 143
     start: 105093
     doi: "10.1016/j.envsoft.2021.105093"
+  - type: article
+    authors:
+      - family-names: "Park"
+        given-names: "Seonggyu"
+      - family-names: "Jeong"
+        given-names: "Jaehak"
+      - family-names: "Motter"
+        given-names: "Elizabeth"
+      - family-names: "Bailey"
+        given-names: "Ryan T."
+      - family-names: "Green"
+        given-names: "Colleen H.M."
+    title: "Introducing APEXMOD - A QGIS plugin for developing coupled surface-subsurface hydrologic modeling framework of APEX, MODFLOW, and RT3D-Salt"
+    journal: "Environmental Modelling & Software"
+    year: 2023
+    volume: 165
+    start: 105723
+    doi: "10.1016/j.envsoft.2023.105723"
