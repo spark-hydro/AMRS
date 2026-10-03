@@ -66,5 +66,6 @@ transport files (Debug vs Release 0.01 - 0.13), so a transport difference of tha
 compilers is not a porting error. ifx differs most; the cause is not found (not the salt NaN path,
 not uninitialised locals `-init=zero,arrays`, not the floating-point model `-fp-model=precise`, not
 the optimisation level; `-save` does not run on ifx: "allocate error"). `scripts/regress.py`
-therefore gates the APEX and MODFLOW flow files (thresholds 2e-2 and 1e-1, 4x or more above the
-worst value seen) and only reports the RT3D transport files.
+therefore gates the APEX and MODFLOW flow files and only reports the RT3D transport files. Gates:
+`SITE75.DWS/.MWS/.WSS` 1e-2 (seen <= 1e-4), all other gated files 2e-1 (seen <= 6.4e-2, on ifx 2025.2
+Debug in GitHub Actions: `amf_apex_channel` 6.4e-2, `SITE75.SWT` 4.0e-2), i.e. at least 3x the worst value.

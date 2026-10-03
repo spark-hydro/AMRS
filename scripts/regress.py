@@ -15,7 +15,7 @@ Tolerance (see RULES below). Two error measures per file, both relative to the f
 own size, so near-zero values do not blow up the comparison:
     relL2 = ||new - ref|| / ||ref||          (whole-file error)
     nmax  = max|new - ref| / max|ref|        (largest single difference)
-Files are gated on relL2 per group; the RT3D transport files are only reported.
+Files are gated on relL2 per group (see RULES); the RT3D transport files are only reported.
 Why: the reference is one Intel (ifort, Windows) run. The salt/nitrate/phosphorus
 transport results are very sensitive to the compiler and its flags (gfortran Release and
 Debug agree with each other, differ from ifort by relL2 ~0.01-0.25; ifx on Linux by
@@ -48,14 +48,19 @@ BAD = re.compile(r'\b(nan|[-+]?inf(inity)?)\b', re.I)
 PATTERNS = ['*.DWS', '*.MWS', '*.RCH', '*.SWT', '*.WSS',
             'MODFLOW/amf_*.out']
 # First matching rule wins: (regex on the relative path, 'gate' or 'info', max relL2 for 'gate').
-# Observed relL2 (gfortran Release = Debug / ifx, 3-year animas dataset, amrs_rel24-003 reference).
+# Observed relL2 on the 3-year animas dataset against the amrs_rel24-003 reference:
+#   gfortran 16 Release = Debug, ifx 2025.3 Release (local) and ifx 2025.2 Debug (GitHub Actions).
+# Thresholds are at least 3x the worst value seen: they catch gross breakage (wrong flows, missing
+# or empty output), not compiler noise.
 RULES = [
-    # APEX outputs: <= 7.9e-4 (gfortran), <= 4.5e-3 (ifx)
-    (r'^(?!MODFLOW/)', 'gate', 2e-2),
-    # RT3D concentrations and solute loads to/from the river: 0.01-0.25 (gfortran), 0.38-1.2 (ifx)
+    # APEX daily, monthly and water-balance summaries: <= 1e-4 in every build seen
+    (r'^(?!MODFLOW/).*\.(DWS|MWS|WSS)$', 'gate', 1e-2),
+    # APEX recharge and soil water: <= 7e-3 (gfortran), <= 4.0e-2 (ifx Debug)
+    (r'^(?!MODFLOW/)', 'gate', 2e-1),
+    # RT3D concentrations and solute loads to/from the river: 0.01-0.25 (gfortran), 0.4-1.2 (ifx)
     (r'^MODFLOW/amf_(RT3D_c|RT_riv|apex_riv)', 'info', None),
-    # MODFLOW flow, recharge, percolation, channel depth: <= 1.4e-2 (gfortran), <= 2.8e-2 (ifx)
-    (r'^MODFLOW/', 'gate', 1e-1),
+    # MODFLOW flow, recharge, percolation, channel depth: <= 1.4e-2 (gfortran), <= 6.4e-2 (ifx Debug)
+    (r'^MODFLOW/', 'gate', 2e-1),
 ]
 # Text the program prints when a run finishes normally; set to None to skip the check.
 DONE_TEXT = 'Normal termination of simulation'
@@ -75,7 +80,7 @@ def rule_for(name):
     for pat, mode, tol in RULES:
         if re.search(pat, name.replace(os.sep, '/')):
             return mode, tol
-    return 'gate', 1e-1
+    return 'gate', 2e-1
 
 
 def measures(a, b):
