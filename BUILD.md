@@ -16,6 +16,10 @@ Download a build from the [Releases page](https://github.com/spark-hydro/AMRS/re
 
 Unzip, then run the executable from inside your model folder (the one with `APEXRUN.DAT`).
 
+To check a download, compare it with the `SHA256SUMS` file on the release page
+(`sha256sum -c SHA256SUMS` on Linux, `Get-FileHash <file> -Algorithm SHA256` in PowerShell).
+See [Antivirus warnings](#antivirus-warnings) if your system flags the Windows file.
+
 ## Requirements
 
 - A Fortran compiler: gfortran 13 or newer, or Intel ifx
@@ -81,6 +85,27 @@ the executable runs on machines without oneAPI.
 The executable is `build\release\amrs-<version>-gnu-win_amd64-Rel.exe`. The release workflow
 builds Windows this way on GitHub. A full run of the model on Windows against the reference has
 not been checked yet.
+
+## Antivirus warnings
+
+The Windows executable is built from this source by GitHub Actions (MinGW gfortran, statically
+linked) and is not code signed. Windows Defender and other antivirus programs sometimes flag
+unsigned executables that few people have downloaded yet as malware by mistake (often with a
+machine-learning verdict whose name ends in `!ml`): a false positive. Before you trust or allow
+the file:
+
+- check that the download matches `SHA256SUMS` from the release page (see above);
+- optionally look the SHA-256 of the `.exe` up on [virustotal.com](https://www.virustotal.com):
+  one or two heuristic hits among many engines point to a false positive;
+- if you prefer not to download an executable, build it yourself on your machine
+  (see [Windows, gfortran (MSYS2)](#windows-gfortran-msys2) above);
+- report the false positive to Microsoft at
+  <https://www.microsoft.com/en-us/wdsi/filesubmission> ("incorrectly detected as malware", with
+  the file); Microsoft usually clears such detections within a few days;
+- in Windows Security, *Protection history* shows the detection name; only if the checksum matches
+  and you trust the source, you can choose *Allow on device* for that item.
+
+If the sums do not match, do not run the file; open an issue instead.
 
 ## Running a model
 
