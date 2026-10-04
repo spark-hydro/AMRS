@@ -69,3 +69,46 @@ the optimisation level; `-save` does not run on ifx: "allocate error"). `scripts
 therefore gates the APEX and MODFLOW flow files and only reports the RT3D transport files. Gates:
 `SITE75.DWS/.MWS/.WSS` 1e-2 (seen <= 1e-4), all other gated files 2e-1 (seen <= 6.4e-2, on ifx 2025.2
 Debug in GitHub Actions: `amf_apex_channel` 6.4e-2, `SITE75.SWT` 4.0e-2), i.e. at least 3x the worst value.
+
+## 6. Windows and Linux gfortran builds agree on flows, not on RT3D transport
+
+The `v0.1.0` Windows executable (MinGW gfortran, GCC 13) was run on Windows on `data/animas` and
+compared with the `v0.1.0` Linux executable (GCC 13.3, same flags), the ifx Linux executable and the
+reference (ifort, Windows). The inputs were the same (the APEX input echo in `SITE75.OUT` differs
+only in run timestamps).
+
+- **Windows gnu against the reference:** the regression passes (25 gated files ok, 12 transport
+  files reported).
+- **Windows gnu against Linux gnu:** MODFLOW flows and APEX results are bit-identical or very close:
+  `amf_MF_gwsw`, `amf_MF_recharge`, `amf_RT3D_percno3`, `amf_RT_percP`, `amf_RT_percSalt`,
+  `amf_apex_gwsw`, `amf_apex_recharge` are exactly equal; `SITE75.DWS` 3e-7, `SITE75.RCH` 3e-4,
+  `SITE75.SWT` 4e-4; the other flow files 7e-3 or less.
+- **RT3D concentrations differ strongly.** Mean absolute value of the monthly concentration files
+  (mg/L):
+
+  | Run | `cNO3_monthly` | `cP_monthly` | `cSalt_monthly` |
+  |---|---|---|---|
+  | reference (ifort, Windows) | 872 | 1980 | 158 |
+  | gfortran, Linux (GCC 13) | 870 | 1970 | 158 |
+  | gfortran, Windows (GCC 13) | 2.3 | 55 | 82 |
+  | ifx, Linux (2025.2) | 2.4 | 60 | 81 |
+
+  The maximum nitrate concentration is about 1.1e5 in the first two rows and 2e3 in the last two.
+  Windows gfortran and ifx are both in the low-concentration regime (relL2 between them: 0.29 for
+  nitrate, 0.26 for salt, 2.7 for phosphorus, whose maxima differ most); the reference and Linux
+  gfortran are close to each other (0.13 for nitrate). The split does not follow the compiler
+  vendor or the operating system.
+
+Causes ruled out (all on the 3-year example): the salt NaN branch (item 1; it changes only the salt
+results), uninitialised local variables (`-init=zero,arrays` on ifx), the floating-point model
+(`-fp-model=precise`), the optimisation level, and uninitialised heap memory (Linux gfortran with
+`MALLOC_PERTURB_=165`, which fills new heap memory with garbage: byte-identical output). The cause
+is not found. Which of the two outcomes is physically right is a question for the model authors.
+This is why the RT3D transport files are only reported by `scripts/regress.py`.
+
+Salinity module outputs (`SALINITY/salt.output.*`, written by `src/SALINITY`) are not part of the
+regression yet. Compared across builds: `budget_subarea` (APEX-side soil salt) is stable (Windows
+gnu against Linux gnu 2e-4, against ifx 1.4e-3); `budget_watershed`, `budget_aquifer`, `outlet` and
+`channels` follow the transport difference (Windows gnu against ifx 0.01-0.04, against Linux gnu
+0.18-0.53). `budget_subarea` is the candidate for a gated file once a reference from the ifort run
+is committed.
