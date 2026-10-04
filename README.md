@@ -28,7 +28,7 @@ Ready-to-run executables are on the
 | `amrs-<version>-ifx-lin_x86_64-Rel.zip` | Linux (Intel ifx) |
 
 Each release also has a `SHA256SUMS` file to check the downloads. The Windows executable is not
-code signed, and some antivirus programs flag unsigned executables by mistake; see
+code signed, and Windows Defender and other antivirus programs sometimes flag such files by mistake; see
 [Antivirus warnings](BUILD.md#antivirus-warnings).
 
 ## Quick start

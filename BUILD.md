@@ -89,17 +89,21 @@ not been checked yet.
 ## Antivirus warnings
 
 The Windows executable is built from this source by GitHub Actions (MinGW gfortran, statically
-linked) and is not code signed. Some antivirus programs and cloud scanners (for example the one
-in OneDrive) flag unsigned executables like this one as malware: a false positive. Before you
-trust or allow the file:
+linked) and is not code signed. Windows Defender and other antivirus programs sometimes flag
+unsigned executables that few people have downloaded yet as malware by mistake (often with a
+machine-learning verdict whose name ends in `!ml`): a false positive. Before you trust or allow
+the file:
 
 - check that the download matches `SHA256SUMS` from the release page (see above);
 - optionally look the SHA-256 of the `.exe` up on [virustotal.com](https://www.virustotal.com):
   one or two heuristic hits among many engines point to a false positive;
 - if you prefer not to download an executable, build it yourself on your machine
   (see [Windows, gfortran (MSYS2)](#windows-gfortran-msys2) above);
-- you can report a false positive to Microsoft at
-  <https://www.microsoft.com/en-us/wdsi/filesubmission>.
+- report the false positive to Microsoft at
+  <https://www.microsoft.com/en-us/wdsi/filesubmission> ("incorrectly detected as malware", with
+  the file); Microsoft usually clears such detections within a few days;
+- in Windows Security, *Protection history* shows the detection name; only if the checksum matches
+  and you trust the source, you can choose *Allow on device* for that item.
 
 If the sums do not match, do not run the file; open an issue instead.
 
