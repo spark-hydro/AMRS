@@ -79,8 +79,10 @@ the executable runs on machines without oneAPI.
    ```
 
 The executable is `build\release\amrs-<version>-gnu-win_amd64-Rel.exe`. The release workflow
-builds Windows this way on GitHub. A full run of the model on Windows against the reference has
-not been checked yet.
+builds Windows this way on GitHub. The `v0.1.0` Windows executable was run on Windows on
+`data/animas` and passes the regression (same gates as Linux). Its MODFLOW flow and APEX results
+match the Linux gfortran build; the RT3D transport results differ strongly (see
+[KNOWN_ISSUES.md](KNOWN_ISSUES.md), section 6).
 
 ## Running a model
 
